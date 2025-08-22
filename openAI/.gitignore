@@ -1,0 +1,25 @@
+openAI/.venv
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.build/
+dist/
+
+# Virtual envs
+.venv/
+venv/
+env/
+ragpy310/
+
+# OS junk
+.DS_Store
+
+# Secrets
+.env
+*/.env
+
+# Local scratch
+*.local.*
+
