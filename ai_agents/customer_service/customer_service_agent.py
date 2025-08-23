@@ -70,10 +70,25 @@ def search_vectors(query_vector):
         resp.raise_for_status()
     return resp.json().get("value", [])
 
+from pathlib import Path
+
+def read_local(filename: str) -> str:
+    base = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
+    p = base / filename
+    if not p.exists():
+        raise FileNotFoundError(f"Not found: {p}")
+    return p.read_text(encoding="utf-8", errors="ignore")
+
 # ---------- Chat loop ----------
 thread = project.agents.threads.create()
 print(f"🧵 Started new thread: {thread.id}")
+
+system_prompt =(
+    "You are a helpful, concise customer service assistant. "
+)
+
 print("💬 Chat started. Type 'exit' to quit.\n")
+
 
 while True:
     user_input = input("You: ").strip()
@@ -112,14 +127,29 @@ while True:
             print("ℹ️ No relevant context found (using plain user input)")
             augmented = user_input
 
+        # 5) Add in the company policies
+        RULES_TEXT = read_local("cs_policy.txt")
+
+        if RULES_TEXT:
+            augmented += "\n\nCompany rules (verbatim, follow strictly):\n" + RULES_TEXT    
+
         # 5) Send to agent
         project.agents.messages.create(thread_id=thread.id, role="user", content=augmented)
 
-        run = project.agents.runs.create_and_process(thread_id=thread.id, agent_id=AGENT_ID)
+        run = project.agents.runs.create_and_process(thread_id=thread.id,
+            agent_id=AGENT_ID,
+            instructions=system_prompt   # or: override_instructions=system_prompt
+            )
         print("⏳ Waiting for agent response...")
+         
         while run.status not in ("completed", "failed"):
             time.sleep(1)
-            run = project.agents.runs.get(thread_id=thread.id, run_id=run.id)
+            run = project.agents.runs.create_and_process(
+            thread_id=thread.id,
+            agent_id=AGENT_ID,
+            instructions=system_prompt   # or: override_instructions=system_prompt
+            )
+ 
 
         if run.status == "failed":
             print(f"❌ Run failed: {run.last_error}")
