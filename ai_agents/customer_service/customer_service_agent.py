@@ -12,7 +12,7 @@ thread = project.agents.threads.create()
 print(f"🧵 Started new thread: {thread.id}")
 
 system_prompt =(
-    "You are a helpful, concise customer service assistant. "
+    "You are a helpful, concise customer service assistant."
 )
 
 print("💬 Chat started. Type 'exit' to quit.\n")
@@ -34,7 +34,7 @@ while True:
         # 2) Vector search in AI Search
         results = search_vectors(q_vec)
 
-        # 3) Build context only if top score >= threshold
+        # 3) Build context only if there is a similar text stored in vector store
         context_text = ""
         if results:
             top_score = results[0]["@search.score"]
@@ -61,12 +61,12 @@ while True:
         if RULES_TEXT:
             augmented += "\n\nCompany rules (verbatim, follow strictly):\n" + RULES_TEXT    
 
-        # 5) Send to agent
+        # 6) Send to agent
         project.agents.messages.create(thread_id=thread.id, role="user", content=augmented)
 
         run = project.agents.runs.create_and_process(thread_id=thread.id,
             agent_id=AGENT_ID,
-            instructions=system_prompt   # or: override_instructions=system_prompt
+            instructions=system_prompt   
             )
         print("⏳ Waiting for agent response...")
  
@@ -74,7 +74,7 @@ while True:
             print(f"❌ Run failed: {run.last_error}")
             continue
 
-        # 6) Print the latest assistant reply
+        # 7) Print the latest assistant reply
         messages = project.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
         for m in messages:
             if m.text_messages:
