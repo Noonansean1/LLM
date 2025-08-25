@@ -69,16 +69,7 @@ while True:
             instructions=system_prompt   # or: override_instructions=system_prompt
             )
         print("⏳ Waiting for agent response...")
-         
-        while run.status not in ("completed", "failed"):
-            time.sleep(1)
-            run = project.agents.runs.create_and_process(
-            thread_id=thread.id,
-            agent_id=AGENT_ID,
-            instructions=system_prompt   # or: override_instructions=system_prompt
-            )
  
-
         if run.status == "failed":
             print(f"❌ Run failed: {run.last_error}")
             continue
