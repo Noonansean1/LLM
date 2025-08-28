@@ -20,6 +20,7 @@ class QnAAgent(AzureAgentBase):
 
         top = results[0].get("@search.score", 0.0)
         if top < self.similarity_threshold:
+            print("This happened")
             return question
 
         context = "\n\n".join(str(r.get("content", "")) for r in results if r.get("@search.score", 0) >= self.similarity_threshold)

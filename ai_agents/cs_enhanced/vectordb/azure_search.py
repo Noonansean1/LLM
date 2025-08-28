@@ -14,7 +14,7 @@ from vectordb.base import VectorStore
 # Azure AI Search
 SEARCH_ENDPOINT = os.getenv("AZURE_SEARCH_ENDPOINT")
 SEARCH_KEY = os.getenv("AZURE_SEARCH_KEY")
-INDEX_NAME = "customer-service-rag-index"
+INDEX_NAME = os.getenv("AZURE_SEARCH_INDEX_NAME")
 VECTOR_FIELD = os.getenv("AZURE_SEARCH_VECTOR_FIELD", "contentVector")
 
 class AzureSearchStore(VectorStore):

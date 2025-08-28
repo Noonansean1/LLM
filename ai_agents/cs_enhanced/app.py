@@ -30,7 +30,7 @@ st.title("🧩 Azure Foundry Agent — Q&A + Ingest")
 store = AzureSearchStore(index_name=INDEX_NAME)
 
 # Agents
-qna = QnAAgent(name="qna", vector_store=store, embed_fn=embed, agent_id=AGENT_ID, verbose=True)
+qna = QnAAgent(name="qna", vector_store=store, embed_fn=embed,similarity_threshold=SIM_THRESH, agent_id=AGENT_ID, verbose=True)
 
 def embed_batch(texts):
     return [embed(t) for t in texts]
