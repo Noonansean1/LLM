@@ -1,0 +1,19 @@
+[
+    ("Order Cancellation", "Orders can be canceled within 30 minutes of placement from your account dashboard."),
+    ("Change Shipping Address", "You can update the shipping address before fulfillment by contacting support with your order number."),
+    ("Track Your Order", "Use the tracking link in your shipment email or check 'Orders' in your account for real-time updates."),
+    ("Returns", "Unworn items can be returned within 30 days; initiate a return from your order detail page."),
+    ("Exchanges", "Size and color exchanges are available within 30 days, subject to stock availability."),
+    ("Damaged or Defective Items", "Report damaged or defective items within 7 days of delivery with photos for a free replacement."),
+    ("Lost Package", "If tracking shows delivered but you can't find it, contact support within 3 days for an investigation."),
+    ("Payment Methods", "We accept major credit cards, PayPal, and Apple Pay; funds are captured when your order ships."),
+    ("Promo Codes", "Enter promo codes at checkout; only one code can be applied per order unless stated otherwise."),
+    ("Gift Cards", "Digital gift cards are delivered by email and do not expire."),
+    ("VAT Invoices", "Download VAT-compliant invoices from 'Billing' in your account after your order ships."),
+    ("Two-Factor Authentication", "Enable 2FA in Account Settings to add an extra layer of security."),
+    ("Delete Account", "To delete your account, submit a request in Privacy Center; processing may take up to 30 days."),
+    ("Support Channels", "Reach us via chat or email; phone support is available for urgent billing or security issues."),
+    ("Response Times", "We aim to respond to all support tickets within 1 business day."),
+    ("456", "Policy number 456 relates to a cancel for any reason ticket for Railgrid."),
+    ("457", "Policy number 457 relates to a cancel for any reason ticket for Railgrid.")
+]
