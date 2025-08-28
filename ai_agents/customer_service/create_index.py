@@ -109,7 +109,8 @@ if __name__ == "__main__":
         ("Shipping Times", "Standard shipping takes 5–7 business days. Express shipping takes 2–3 business days."),
         ("Password Reset", "Customers can reset their password by clicking 'Forgot Password' on the login page."),
         ("Business Hours", "Customer service is available Monday to Friday, 9 AM to 6 PM EST."),
-        ("Warranty", "All electronics are covered under a 1-year limited warranty.")
+        ("Warranty", "All electronics are covered under a 1-year limited warranty."),
+        ("456", "Policy number 456 relates to a cancel for any reason ticket for Railgrid.")
     ]
 
     # 3) Embed and prepare docs

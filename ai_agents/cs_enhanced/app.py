@@ -3,7 +3,7 @@ import os
 import ast
 import re
 import streamlit as st
-from agents.customer_agent import QnAAgent
+from agents.customer_service_agent import QnAAgent
 from agents.ingest_agent import IngestAgent
 from vectordb.azure_search import AzureSearchStore
 from dotenv import load_dotenv
@@ -18,10 +18,6 @@ SIM_THRESH = float(os.getenv("SIMILARITY_THRESHOLD", "0.75"))
 # Bring your own embedding function (sync wrapper)
 # Here we assume you have a utility `embed(text:str)->list[float]`
 from utils.helpers_func import embed 
-# as embed_one
-
-def embed_fn(texts):
-    return [embed(t) for t in texts]
 
 st.set_page_config(page_title="Azure Foundry Agent", page_icon="🧩", layout="centered")
 st.title("🧩 Azure Foundry Agent — Q&A + Ingest")
@@ -37,11 +33,9 @@ def embed_batch(texts):
 
 ingest = IngestAgent(embed_fn=embed_batch, index_name=os.getenv("AZURE_SEARCH_INDEX"))
 
-# ingest = IngestAgent(name="ingest", vector_store=store, embed_fn=embed_fn, agent_id=AGENT_ID, verbose=True)
-
 with st.sidebar:
     st.subheader("Settings")
-    system_prompt = st.text_area("System prompt", value="You are a helpful, concise customer service assistant.")
+    system_prompt = st.text_area("System prompt", value="You are a helpful, concise customer service agent acting as a co-worker.")
 
 st.header("Ask a question")
 q = st.text_input("Your question")
