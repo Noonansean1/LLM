@@ -1,4 +1,5 @@
 # agent_connect_loop_high.py
+import ast
 import os, time, json, requests
 from dotenv import load_dotenv
 from openai import AzureOpenAI
@@ -46,34 +47,41 @@ def embed(text: str):
     resp = aoai.embeddings.create(model=EMBED_MODEL, input=text)
     return resp.data[0].embedding
 
-def search_vectors(self, query_vector):
-    url = f"{SEARCH_ENDPOINT}/indexes/{INDEX_NAME}/docs/search?api-version=2024-07-01"
-    headers = {"Content-Type": "application/json", "api-key": SEARCH_KEY}
-    payload = {
-        "top": TOP_K,
-        "vectorQueries": [
-            {
-                "kind": "vector",
-                "vector": query_vector,
-                "fields": VECTOR_FIELD,
-                "k": TOP_K
-            }
-        ]
-    }
-    resp = requests.post(url, headers=headers, data=json.dumps(payload))
-    if resp.status_code >= 400:
-        try:
-            print("❌ Search error:", resp.json())
-        except Exception:
-            print("❌ Search error:", resp.text)
-        resp.raise_for_status()
-    return resp.json().get("value", [])
 
-from pathlib import Path
+def load_pairs_from_text(raw: str):
+    """
+    Accepts text that is:
+      - JSON: [["Title","Content"], ...]  OR [{"title":"...","content":"..."}, ...]
+      - Python literal: [("Title","Content"), ...]  (possibly assigned: FAQ_ENTRIES = [ ... ])
+    Returns: List[Tuple[str, str]]
+    """
+    raw = raw.strip()
 
-def read_local(filename: str) -> str:
-    base = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd()
-    p = base / filename
-    if not p.exists():
-        raise FileNotFoundError(f"Not found: {p}")
-    return p.read_text(encoding="utf-8", errors="ignore")
+    # 1) Try JSON first
+    try:
+        data = json.loads(raw)
+    except Exception:
+        # 2) Try to extract the list literal (handles 'VAR = [ ... ]' too)
+        m = re.search(r'\[[\s\S]*\]', raw)
+        if not m:
+            raise ValueError("Could not find a JSON or Python list in the file.")
+        data = ast.literal_eval(m.group(0))
+
+    # Normalize to list of (title, content)
+    pairs = []
+    for item in data:
+        if isinstance(item, (list, tuple)) and len(item) == 2:
+            t, c = item
+        elif isinstance(item, dict) and "title" in item and "content" in item:
+            t, c = item["title"], item["content"]
+        else:
+            raise ValueError("Each item must be (title, content) or {'title','content'}.")
+
+        t = str(t).strip()
+        c = str(c).strip()
+        if c:  # skip empty content
+            pairs.append((t, c))
+
+    if not pairs:
+        raise ValueError("Parsed zero valid (title, content) pairs.")
+    return pairs

@@ -1,4 +1,5 @@
 # app.py
+import json
 import os
 import ast
 import re
@@ -17,7 +18,7 @@ SIM_THRESH = float(os.getenv("SIMILARITY_THRESHOLD", "0.75"))
 
 # Bring your own embedding function (sync wrapper)
 # Here we assume you have a utility `embed(text:str)->list[float]`
-from utils.helpers_func import embed 
+from utils.helpers_func import embed,load_pairs_from_text
 
 st.set_page_config(page_title="Azure Foundry Agent", page_icon="🧩", layout="centered")
 st.title("🧩 Azure Foundry Agent — Q&A + Ingest")
@@ -50,43 +51,6 @@ if st.button("Ask"):
 
 st.markdown("---")
 
-def load_pairs_from_text(raw: str):
-    """
-    Accepts text that is:
-      - JSON: [["Title","Content"], ...]  OR [{"title":"...","content":"..."}, ...]
-      - Python literal: [("Title","Content"), ...]  (possibly assigned: FAQ_ENTRIES = [ ... ])
-    Returns: List[Tuple[str, str]]
-    """
-    raw = raw.strip()
-
-    # 1) Try JSON first
-    try:
-        data = json.loads(raw)
-    except Exception:
-        # 2) Try to extract the list literal (handles 'VAR = [ ... ]' too)
-        m = re.search(r'\[[\s\S]*\]', raw)
-        if not m:
-            raise ValueError("Could not find a JSON or Python list in the file.")
-        data = ast.literal_eval(m.group(0))
-
-    # Normalize to list of (title, content)
-    pairs = []
-    for item in data:
-        if isinstance(item, (list, tuple)) and len(item) == 2:
-            t, c = item
-        elif isinstance(item, dict) and "title" in item and "content" in item:
-            t, c = item["title"], item["content"]
-        else:
-            raise ValueError("Each item must be (title, content) or {'title','content'}.")
-
-        t = str(t).strip()
-        c = str(c).strip()
-        if c:  # skip empty content
-            pairs.append((t, c))
-
-    if not pairs:
-        raise ValueError("Parsed zero valid (title, content) pairs.")
-    return pairs
 
 st.header("Upload FAQ tuples file (single file)")
 file = st.file_uploader(
