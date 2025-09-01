@@ -34,7 +34,7 @@ class AzureAgentBase(AgentBase):
     def send_user_message(self, content: str):
         tid = self.ensure_thread()
         self.client.agents.messages.create(thread_id=tid, role="user", content=content)
-        self.log_in("User message added to thread")
+        self.log_in(f"User message added to thread {tid}")
 
     def run_once(self, instructions: str | None = None):
         tid = self.ensure_thread()
