@@ -4,3 +4,4 @@ It will respond with details of whether the custoemrs flight is delayed or not a
 
 The streamlit app can be run using: 
 
+streamlit run app.py
