@@ -50,7 +50,8 @@ class AzureSearchStore(VectorStore):
                     "fields": VECTOR_FIELD,
                     "k": k
                 }
-            ]
+            ],
+            "select": "id,title,content"
         }
         resp = requests.post(url, headers=headers, data=json.dumps(payload))
         if resp.status_code >= 400:
